@@ -1,0 +1,63 @@
+#!/bin/bash
+# Master Controller for Cursor Agent CLI
+
+# Get directory of this script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR/utils.sh"
+
+check_deps
+check_auth
+
+COMMAND=$1
+shift
+
+case "$COMMAND" in
+  "launch")
+    # Usage: ./cursor_ops.sh launch "Prompt" "RepoURL" [Model]
+    export PROMPT="$1"
+    export REPO="$2"
+    export MODEL="${3:-claude-3-5-sonnet-20241022}" # Defaulting to a known cursor model if unspecified, or respecting notion's default if it had one. Notion example said claude-4-sonnet.
+    # Note: Notion example had "claude-4-sonnet".
+    if [ -z "$3" ]; then export MODEL="claude-3-5-sonnet-20241022"; fi 
+    
+    "$DIR/lib/launch.sh"
+    ;;
+  "list")
+    export LIMIT="${1:-20}"
+    "$DIR/lib/list.sh"
+    ;;
+  "status")
+    export AGENT_ID="$1"
+    "$DIR/lib/status.sh"
+    ;;
+  "stop")
+    export AGENT_ID="$1"
+    "$DIR/lib/stop.sh"
+    ;;
+  "delete")
+    export AGENT_ID="$1"
+    "$DIR/lib/delete.sh"
+    ;;
+  "followup")
+    export AGENT_ID="$1"
+    export FOLLOWUP_TEXT="$2"
+    "$DIR/lib/followup.sh"
+    ;;
+  "history")
+    export AGENT_ID="$1"
+    "$DIR/lib/conversation.sh"
+    ;;
+  "models")
+    "$DIR/lib/models.sh"
+    ;;
+  "repos")
+    "$DIR/lib/repos.sh"
+    ;;
+  "whoami")
+    "$DIR/lib/me.sh"
+    ;;
+  *)
+    echo "Usage: $0 {launch|list|status|stop|delete|followup|history|models|repos|whoami} [args...]"
+    exit 1
+    ;;
+esac
