@@ -56,12 +56,18 @@ All commands are invoked via the main script:
 Create a new agent.
 
 ```bash
-./master_control.sh launch "Summarize the repo README" "https://github.com/org/repo" "claude-3-5-sonnet-20241022"
+./master_control.sh launch "Summarize the repo README" "https://github.com/org/repo" "gpt-5.2"
+```
+
+Optionally specify a repo ref (branch/tag):
+
+```bash
+./master_control.sh launch "Summarize the repo README" "https://github.com/org/repo" "gpt-5.2" "master"
 ```
 
 Notes:
 - If `model` is omitted, it defaults to `claude-3-5-sonnet-20241022`.
-- The repository ref is set to `main` by default in the request.
+- If `ref` is omitted, the CLI will try `main`, then `master`.
 
 ### list
 List agents (optionally limit the number of results).

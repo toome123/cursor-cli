@@ -13,13 +13,14 @@ shift
 
 case "$COMMAND" in
   "launch")
-    # Usage: ./cursor_ops.sh launch "Prompt" "RepoURL" [Model]
+    # Usage: ./cursor_ops.sh launch "Prompt" "RepoURL" [Model] [Ref]
     export PROMPT="$1"
     export REPO="$2"
     export MODEL="${3:-claude-3-5-sonnet-20241022}" # Defaulting to a known cursor model if unspecified, or respecting notion's default if it had one. Notion example said claude-4-sonnet.
     # Note: Notion example had "claude-4-sonnet".
     if [ -z "$3" ]; then export MODEL="claude-3-5-sonnet-20241022"; fi 
-    
+    export REF="$4"
+
     "$DIR/lib/launch.sh"
     ;;
   "list")
