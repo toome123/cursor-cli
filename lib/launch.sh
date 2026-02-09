@@ -4,6 +4,7 @@ set -euo pipefail
 # Optional REF override via env (export REF=...) or launch arg 4.
 # If REF is not provided, try to detect a sensible default branch.
 REF_VALUE="${REF:-}"
+export REF_VALUE
 
 if [ -z "$REF_VALUE" ]; then
   # Try main, then master.
@@ -17,9 +18,18 @@ if [ -z "$REF_VALUE" ]; then
   fi
 fi
 
+payload=$(python3 - <<'PY'
+import json, os
+payload = {
+  "prompt": {"text": os.environ.get("PROMPT", "")},
+  "model": os.environ.get("MODEL", ""),
+  "source": {"repository": os.environ.get("REPO", ""), "ref": os.environ.get("REF_VALUE", os.environ.get("REF", ""))},
+}
+print(json.dumps(payload))
+PY
+)
+
 curl -s -X POST "https://api.cursor.com/v0/agents" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $CURSOR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d "$(jq -n --arg text "$PROMPT" --arg repo "$REPO" --arg model "$MODEL" --arg ref "$REF_VALUE" \
-    '{prompt: {text: $text}, model: $model, source: {repository: $repo, ref: $ref}}')"
+  -d "$payload"

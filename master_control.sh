@@ -16,9 +16,10 @@ case "$COMMAND" in
     # Usage: ./cursor_ops.sh launch "Prompt" "RepoURL" [Model] [Ref]
     export PROMPT="$1"
     export REPO="$2"
-    export MODEL="${3:-claude-3-5-sonnet-20241022}" # Defaulting to a known cursor model if unspecified, or respecting notion's default if it had one. Notion example said claude-4-sonnet.
-    # Note: Notion example had "claude-4-sonnet".
-    if [ -z "$3" ]; then export MODEL="claude-3-5-sonnet-20241022"; fi 
+    # Cursor model names change over time; keep this in sync with `master_control.sh models`.
+    # Current defaults (2026-02): gpt-5.2 / gpt-5.2-high / gpt-5.2-codex-high / claude-4.6-opus-high-thinking
+    export MODEL="${3:-gpt-5.2-codex-high}"
+    if [ -z "${3:-}" ]; then export MODEL="gpt-5.2-codex-high"; fi 
     export REF="$4"
 
     "$DIR/lib/launch.sh"
